@@ -1,0 +1,8 @@
+#Ignore dependancy folders
+node_modules
+
+#Ignore environment variables
+.env
+
+#Ignore configuration files
+config.json

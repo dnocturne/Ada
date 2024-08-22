@@ -1,0 +1,27 @@
+{
+  "name": "ada",
+  "version": "1.0.0",
+  "description": "Ada Wong on the case!",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dnocturne/Ada.git"
+  },
+  "author": "dnocturne",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dnocturne/Ada/issues"
+  },
+  "homepage": "https://github.com/dnocturne/Ada#readme",
+  "dependencies": {
+    "discord-limits": "^1.1.0",
+    "discord.js": "^14.15.3",
+    "dotenv": "^16.4.5",
+    "mongoose": "^8.5.2",
+    "sunar": "^0.5.0"
+  }
+}
