@@ -1,7 +1,7 @@
 import { Slash, protect, execute } from "sunar";
 import { EmbedBuilder } from "discord.js";
-import { adminOnly } from "../../../protectors/only-admins.js";
-import TicketCategory from "../../../schemas/tickets/ticketCategorySchema.js";
+import { adminOnly } from "../../protectors/only-admins.js";
+import TicketCategory from "../../schemas/tickets/ticketCategorySchema.js";
 
 const slash = new Slash({
   name: "ticket-categories",
@@ -15,12 +15,6 @@ const slash = new Slash({
         {
           name: "name",
           description: "Kategorijos pavadinimas",
-          type: 3,
-          required: true,
-        },
-        {
-          name: "description",
-          description: "Kategorijos aprašymas",
           type: 3,
           required: true,
         },
@@ -59,9 +53,8 @@ execute(slash, async (interaction) => {
   const { options } = interaction;
 
   if (options.getSubcommand() === "create") {
-    // Retrieve the name, description and role of the category
+    // Retrieve the name and role of the category
     const name = options.getString("name", true);
-    const description = options.getString("description", true);
     const role = options.getRole("role", true);
     // Retrieve the guild ID
     const guildId = interaction.guild.id;
@@ -82,7 +75,7 @@ execute(slash, async (interaction) => {
         });
       return interaction.reply({ embeds: [embed] });
     }
-    // Create a new category with the provided name and description and a unique ID starting from 1 as categoryId
+    // Create a new category with the provided name and a unique ID starting from 1 as categoryId
     const categoryId = (await TicketCategory.find({ guildId })).length + 1;
     const newCategory = new TicketCategory({
       guildId,
@@ -127,7 +120,7 @@ execute(slash, async (interaction) => {
         });
       return interaction.reply({ embeds: [embed] });
     }
-    // Delete the entire category from the database - it's id, guildid, name, description and role associated with it
+    // Delete the entire category from the database - it's id, guildid, name and role associated with it
     await TicketCategory.deleteOne({ categoryId, guildId });
     // Return a success message
     const embed = new EmbedBuilder()
