@@ -73,7 +73,7 @@ execute(slash, async (interaction) => {
           text: "Ada | Error",
           iconURL: interaction.client.user.displayAvatarURL(),
         });
-      return interaction.reply({ embeds: [embed] });
+      return interaction.reply({ embeds: [embed], ephemeral: true });
     }
     // Create a new category with the provided name and a unique ID starting from 1 as categoryId
     const categoryId = (await TicketCategory.find({ guildId })).length + 1;
@@ -96,7 +96,7 @@ execute(slash, async (interaction) => {
         text: "Ada | Ticket System",
         iconURL: interaction.client.user.displayAvatarURL(),
       });
-    return interaction.reply({ embeds: [embed] });
+    return interaction.reply({ embeds: [embed], ephemeral: true });
   }
   if (options.getSubcommand() === "remove") {
     // Retrieve the category ID
@@ -118,7 +118,7 @@ execute(slash, async (interaction) => {
           text: "Ada | Error",
           iconURL: interaction.client.user.displayAvatarURL(),
         });
-      return interaction.reply({ embeds: [embed] });
+      return interaction.reply({ embeds: [embed], ephemeral: true });
     }
     // Delete the entire category from the database - it's id, guildid, name and role associated with it
     await TicketCategory.deleteOne({ categoryId, guildId });
@@ -131,7 +131,7 @@ execute(slash, async (interaction) => {
         text: "Ada | Ticket System",
         iconURL: interaction.client.user.displayAvatarURL(),
       });
-    return interaction.reply({ embeds: [embed] });
+    return interaction.reply({ embeds: [embed], ephemeral: true });
   }
   if (options.getSubcommand() === "list") {
     // Retrieve all categories from the database
@@ -148,7 +148,7 @@ execute(slash, async (interaction) => {
           text: "Ada | Error",
           iconURL: interaction.client.user.displayAvatarURL(),
         });
-      return interaction.reply({ embeds: [embed] });
+      return interaction.reply({ embeds: [embed], ephemeral: true });
     }
     // Create an embedded message with all the categories
     const embed = new EmbedBuilder()
@@ -166,7 +166,7 @@ execute(slash, async (interaction) => {
         text: "Ada | Ticket System",
         iconURL: interaction.client.user.displayAvatarURL(),
       });
-    return interaction.reply({ embeds: [embed] });
+    return interaction.reply({ embeds: [embed], ephemeral: true });
   }
 });
 
