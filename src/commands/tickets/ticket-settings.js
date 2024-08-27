@@ -53,6 +53,7 @@ const slash = new Slash({
 protect(slash, [adminOnly]);
 
 execute(slash, async (interaction) => {
+  const { options } = interaction;
   const guildId = interaction.guild.id;
 
   // Check if the ticket system is setup for the guild. Both Schemas are made during the setup process, so we only check if one exists.
@@ -74,8 +75,8 @@ execute(slash, async (interaction) => {
   }
 
   // Logs Sub-command - Set logs channel
-  if (interaction.options.get("logs")) {
-    const logsChannelId = interaction.options.get("logs").value;
+  if (options.getSubcommand() === "logs") {
+    const logsChannelId = interaction.options.get("channel").value;
     await ticketSettingsSchema.updateOne({ guildId }, { logsChannelId });
     // Convert the channel ID to a linkable channel
     const logsChannel = await interaction.guild.channels.fetch(logsChannelId);
@@ -95,16 +96,13 @@ execute(slash, async (interaction) => {
     });
   }
   // Ticket Limit Sub-command - Set ticket limit
-  if (interaction.options.get("ticket-limit")) {
-    const ticketLimit = interaction.options.get("ticket-limit").value;
+  if (options.getSubcommand() === "ticket-limit") {
+    const ticketLimit = interaction.options.get("limit").value;
     await ticketSettingsSchema.updateOne({ guildId }, { ticketLimit });
-    // Reply that the ticket limit has been updated
     const embed = new EmbedBuilder()
       .setColor("#baffc9")
       .setTitle("✅ | Sėkmingas veiksmas")
-      .setDescription(
-        `Maksimalus bilietų skaičius vienam asmeniui bus: ${ticketLimit}`
-      )
+      .setDescription(`Bilietų limitas buvo nustatytas į: ${ticketLimit}`)
       .setFooter({
         text: "Ada | Ticket System",
         iconURL: interaction.client.user.displayAvatarURL(),
@@ -115,8 +113,8 @@ execute(slash, async (interaction) => {
     });
   }
   // Word Limit Sub-command - Set word limit
-  if (interaction.options.get("word-limit")) {
-    const wordLimit = interaction.options.get("word-limit").value;
+  if (options.getSubcommand() === "word-limit") {
+    const wordLimit = interaction.options.get("limit").value; // Corrected option name
     await ticketSettingsSchema.updateOne({ guildId }, { wordLimit });
     // Reply that the word limit has been updated
     const embed = new EmbedBuilder()
