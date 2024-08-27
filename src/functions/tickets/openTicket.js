@@ -8,6 +8,7 @@ import {
 import ticketSchema from "../../schemas/tickets/ticketSchema.js";
 import ticketSetupSchema from "../../schemas/tickets/ticketSetupSchema.js";
 import TicketCategory from "../../schemas/tickets/ticketCategorySchema.js";
+import ticketSettingsSchema from "../../schemas/tickets/ticketSettingsSchema.js";
 
 async function openTicket(interaction) {
   const guildId = interaction.guild.id;
@@ -26,6 +27,41 @@ async function openTicket(interaction) {
       });
 
     return interaction.reply({ embeds: [noTicketSystem], ephemeral: true });
+  }
+
+  // Fetch ticket settings
+  const ticketSettings = await ticketSettingsSchema.findOne({ guildId });
+  const ticketLimit = ticketSettings ? ticketSettings.ticketLimit : 1;
+
+  // Check if the user already has tickets
+  const userTickets = await ticketSchema.find({
+    guildId,
+    userId,
+  });
+
+  // Compare the number of tickets with the ticket limit
+  if (userTickets.length >= ticketLimit) {
+    if (
+      !interaction.member.permissions.has(
+        PermissionsBitField.Flags.Administrator
+      )
+    ) {
+      const ticketLimitMessage = new EmbedBuilder()
+        .setColor("#FFB3BA")
+        .setTitle("❌ | Klaida")
+        .setDescription(
+          `Jūs jau turite ${userTickets.length} atidarytų bilietų. Bilietų limitas yra ${ticketLimit}.`
+        )
+        .setFooter({
+          text: "Ada | Error",
+          iconURL: interaction.client.user.displayAvatarURL(),
+        });
+
+      return interaction.reply({
+        embeds: [ticketLimitMessage],
+        ephemeral: true,
+      });
+    }
   }
 
   // Fetch available categories
@@ -140,6 +176,27 @@ async function openTicket(interaction) {
       components: [],
       ephemeral: true,
     });
+
+    // If the user is an admin and exceeded the ticket limit, send a warning message in the ticket channel
+    if (
+      userTickets.length >= ticketLimit &&
+      interaction.member.permissions.has(
+        PermissionsBitField.Flags.Administrator
+      )
+    ) {
+      const adminWarningMessage = new EmbedBuilder()
+        .setColor("#FFB3BA")
+        .setTitle("⚠️ | Įspėjimas")
+        .setDescription(
+          `Jūs jau turite ${userTickets.length} atidarytų bilietų. Bilietų limitas yra ${ticketLimit}.`
+        )
+        .setFooter({
+          text: "Ada | Warning",
+          iconURL: interaction.client.user.displayAvatarURL(),
+        });
+
+      await ticketChannel.send({ embeds: [adminWarningMessage] });
+    }
   });
 
   collector.on("end", (collected) => {
