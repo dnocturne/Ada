@@ -4,6 +4,8 @@ import {
   ChannelType,
   PermissionsBitField,
   EmbedBuilder,
+  ButtonBuilder,
+  ButtonStyle,
 } from "discord.js";
 import ticketSchema from "../../schemas/tickets/ticketSchema.js";
 import ticketSetupSchema from "../../schemas/tickets/ticketSetupSchema.js";
@@ -11,6 +13,12 @@ import TicketCategory from "../../schemas/tickets/ticketCategorySchema.js";
 import ticketSettingsSchema from "../../schemas/tickets/ticketSettingsSchema.js";
 
 async function openTicket(interaction) {
+  // Create the close ticket button
+  const closeTicketButton = new ButtonBuilder()
+    .setCustomId("closeTicket")
+    .setLabel("Uždaryti bilietą")
+    .setStyle(ButtonStyle.Danger);
+
   const guildId = interaction.guild.id;
   const userId = interaction.user.id; // Get the user ID
 
@@ -175,6 +183,35 @@ async function openTicket(interaction) {
       embeds: [ticketCreatedMessage],
       components: [],
       ephemeral: true,
+    });
+
+    // Send a message to the ticket channel
+    const ticketChannelMessage = new EmbedBuilder()
+      .setColor("#baffc9")
+      .setTitle("🎫 | Bilietas atidarytas")
+      .setDescription(
+        `Sveiki, ${interaction.user.toString()}! Prašome aprašyti savo problemą, kad mes galėtume jums padėti.`
+      )
+      .addFields(
+        {
+          name: "Pagalbos kategorija",
+          value: selectedCategory.categoryName,
+        },
+        {
+          name: "Pagalbos agentai",
+          value: `<@&${selectedCategory.roleId}>`,
+        }
+      )
+      .setFooter({
+        text: "Ada | Ticket System",
+        iconURL: interaction.client.user.displayAvatarURL(),
+      });
+
+    const row = new ActionRowBuilder().addComponents(closeTicketButton);
+
+    await ticketChannel.send({
+      embeds: [ticketChannelMessage],
+      components: [row],
     });
 
     // If the user is an admin and exceeded the ticket limit, send a warning message in the ticket channel

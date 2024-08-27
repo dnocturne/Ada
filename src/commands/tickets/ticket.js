@@ -1,7 +1,9 @@
-import { Slash, execute } from "sunar";
+import { Slash, Button, Modal, execute } from "sunar";
 import { EmbedBuilder, PermissionsBitField } from "discord.js";
-import openTicket from "../../functions/tickets/openTicket.js";
 import ticketSchema from "../../schemas/tickets/ticketSchema.js";
+import openTicket from "../../functions/tickets/openTicket.js";
+import closeTicket from "../../functions/tickets/closeTicket.js";
+import handleCloseTicketReason from "../../functions/tickets/handleCloseTicketReason.js";
 
 const slash = new Slash({
   name: "ticket",
@@ -233,4 +235,18 @@ execute(slash, async (interaction) => {
   }
 });
 
-export { slash };
+const button = new Button({ id: "closeTicket" });
+
+execute(button, (interaction) => {
+  // Execute the closeTicket function
+  closeTicket(interaction);
+});
+
+const modal = new Modal({ id: "closeTicketReason" });
+
+execute(modal, (interaction) => {
+  const reason = interaction.fields.getTextInputValue("content");
+  handleCloseTicketReason(interaction, reason); // Use the new function
+});
+
+export { slash, button, modal };
