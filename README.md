@@ -4,7 +4,7 @@ Ada is a Discord bot designed for specific purposes and specific communities, th
 
 ## Important Note ❗
 
-Ada is coded and made for a few Lithuanian communities. I don't have an interest in making the discord bot multilingual or English. If you wish to add English support with libraries such as i18next or anything else. Make a Pull Request. Plenty of various tools exist to translate text from Lithuanian to English.
+Ada is coded and made for a few Lithuanian communities. I don't have an interest in making the discord bot multilingual or English. If you wish to add English support with libraries such as i18next or anything else. Make a Pull Request. Plenty of various tools exist to translate text from Lithuanian to English. The bot is meant to be multi-guilded and can be used in more than one discord server.
 
 ## Features 🚀
 
