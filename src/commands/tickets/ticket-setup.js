@@ -16,6 +16,7 @@ import ticketSetupSchema from "../../schemas/tickets/ticketSetupSchema.js";
 import ticketSettingsSchema from "../../schemas/tickets/ticketSettingsSchema.js";
 import ticketSchema from "../../schemas/tickets/ticketSchema.js";
 import ticketCategory from "../../schemas/tickets/ticketCategorySchema.js";
+import ticketExtrasSchema from "../../schemas/tickets/ticketExtrasSchema.js";
 import openTicket from "../../functions/tickets/openTicket.js";
 
 const slash = new Slash({
@@ -124,11 +125,12 @@ execute(slash, async (interaction) => {
 
     interaction.showModal(modal);
   } else if (subcommand === "remove") {
-    // Remove ticketSchema, ticketSettingsSchema, ticketSetupSchema, ticketCategorySchema data relevant to the guild
+    // Remove ticketSchema, ticketSettingsSchema, ticketSetupSchema, ticketCategorySchema, ticketExtraSchema data relevant to the guild
     await ticketSetupSchema.deleteOne({ guildId: interaction.guildId });
     await ticketSettingsSchema.deleteOne({ guildId: interaction.guildId });
     await ticketSchema.deleteMany({ guildId: interaction.guildId });
     await ticketCategory.deleteMany({ guildId: interaction.guildId });
+    await ticketExtrasSchema.deleteMany({ guildId: interaction.guildId });
 
     // Send a confirmation
     const embed = new EmbedBuilder()
