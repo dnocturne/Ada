@@ -1,5 +1,5 @@
 import { Slash, execute, protect } from "sunar";
-import { EmbedBuilder } from "discord.js";
+import { EmbedBuilder, PermissionFlagsBits } from "discord.js";
 import { adminOnly } from "../../protectors/only-admins.js";
 import ticketSetupSchema from "../../schemas/tickets/ticketSetupSchema.js";
 import ticketSettingsSchema from "../../schemas/tickets/ticketSettingsSchema.js";
@@ -7,6 +7,7 @@ import ticketSettingsSchema from "../../schemas/tickets/ticketSettingsSchema.js"
 const slash = new Slash({
   name: "ticket-settings",
   description: "Konfiguruoti ir keisti bilietų sistemos nustatymus",
+  defaultMemberPermissions: [PermissionFlagsBits.Administrator],
   options: [
     {
       name: "logs",

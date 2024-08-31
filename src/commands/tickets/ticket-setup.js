@@ -9,6 +9,7 @@ import {
   EmbedBuilder,
   ButtonBuilder,
   ButtonStyle,
+  PermissionFlagsBits,
 } from "discord.js";
 import { adminOnly } from "../../protectors/only-admins.js";
 import ticketSetupSchema from "../../schemas/tickets/ticketSetupSchema.js";
@@ -20,6 +21,7 @@ import openTicket from "../../functions/tickets/openTicket.js";
 const slash = new Slash({
   name: "ticket-setup",
   description: "Sukonfiguruoti bilietų sistemą",
+  defaultMemberPermissions: [PermissionFlagsBits.Administrator],
   options: [
     {
       name: "create",

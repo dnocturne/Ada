@@ -5,6 +5,7 @@ import {
   TextInputStyle,
   ModalBuilder,
   ActionRowBuilder,
+  PermissionFlagsBits,
 } from "discord.js";
 import ticketExtrasSchema from "../../schemas/tickets/ticketExtrasSchema.js";
 import ticketSetupSchema from "../../schemas/tickets/ticketSetupSchema.js";
@@ -14,6 +15,7 @@ import { adminOnly } from "../../protectors/only-admins.js";
 const slash = new Slash({
   name: "ticket-extras",
   description: "Sukonfiguruoti bilietų papildymus",
+  defaultMemberPermissions: [PermissionFlagsBits.Administrator],
   options: [
     {
       name: "create",

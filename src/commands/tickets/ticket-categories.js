@@ -1,11 +1,12 @@
 import { Slash, protect, execute } from "sunar";
-import { EmbedBuilder } from "discord.js";
+import { EmbedBuilder, PermissionFlagsBits } from "discord.js";
 import { adminOnly } from "../../protectors/only-admins.js";
 import ticketCategory from "../../schemas/tickets/ticketCategorySchema.js";
 
 const slash = new Slash({
   name: "ticket-categories",
   description: "Sukurti, redaguoti ir ištrinti bilietų kategorijas",
+  defaultMemberPermissions: [PermissionFlagsBits.Administrator],
   options: [
     {
       name: "create",
