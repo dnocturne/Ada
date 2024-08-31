@@ -8,7 +8,6 @@ const ticketExtrasSchema = new mongoose.Schema({
   extrasId: {
     type: String,
     required: true,
-    unique: true,
   },
   categoryId: {
     type: String,
@@ -19,5 +18,11 @@ const ticketExtrasSchema = new mongoose.Schema({
     required: true,
   },
 });
+
+// Create a compound index to ensure the combination of guildId, categoryId, and extrasId is unique
+ticketExtrasSchema.index(
+  { guildId: 1, categoryId: 1, extrasId: 1 },
+  { unique: true }
+);
 
 export default mongoose.model("ticketExtras", ticketExtrasSchema);

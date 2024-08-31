@@ -91,7 +91,7 @@ async function openTicket(interaction) {
   // Create a dropdown menu for category selection
   const categoryOptions = categories.map((category) => ({
     label: category.categoryName,
-    value: category.categoryId,
+    value: category.categoryId.toString(), // Ensure categoryId is a string
   }));
 
   const selectMenu = new StringSelectMenuBuilder()
@@ -128,7 +128,8 @@ async function openTicket(interaction) {
 
     const selectedCategoryId = i.values[0];
     const selectedCategory = categories.find(
-      (category) => category.categoryId === selectedCategoryId
+      (category) =>
+        category.categoryId.toString() === selectedCategoryId.toString()
     );
 
     // Create a new text channel for the ticket
@@ -217,6 +218,7 @@ async function openTicket(interaction) {
 
     // Fetch and send extras if they exist for the selected category
     const extras = await ticketExtrasSchema.find({
+      guildId,
       categoryId: selectedCategoryId,
     });
     if (extras.length > 0) {

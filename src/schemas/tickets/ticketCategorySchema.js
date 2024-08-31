@@ -6,9 +6,8 @@ const ticketCategorySchema = new mongoose.Schema({
     required: true,
   },
   categoryId: {
-    type: String,
+    type: Number,
     required: true,
-    unique: true,
   },
   categoryName: {
     type: String,
@@ -20,4 +19,9 @@ const ticketCategorySchema = new mongoose.Schema({
   },
 });
 
-export default mongoose.model("ticketCategory", ticketCategorySchema);
+// Create a compound index to ensure the combination of guildId and categoryId is unique
+ticketCategorySchema.index({ guildId: 1, categoryId: 1 }, { unique: true });
+
+const ticketCategory = mongoose.model("ticketCategory", ticketCategorySchema);
+
+export default ticketCategory;

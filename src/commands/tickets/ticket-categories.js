@@ -54,17 +54,35 @@ execute(slash, async (interaction) => {
   const { options } = interaction;
 
   if (options.getSubcommand() === "create") {
-    // Retrieve the name and role of the category
     const name = options.getString("name", true);
     const role = options.getRole("role", true);
-    // Retrieve the guild ID
     const guildId = interaction.guild.id;
-    // Check if the category by that name already exists
+
+    // Check if the compound index already exists
+    const indexes = await ticketCategory.collection.indexes();
+    const indexExists = indexes.some(
+      (index) => index.key.guildId === 1 && index.key.categoryId === 1
+    );
+
+    // Ensure the compound index is created if it doesn't exist
+    if (!indexExists) {
+      try {
+        await ticketCategory.collection.createIndex(
+          { guildId: 1, categoryId: 1 },
+          { unique: true }
+        );
+      } catch (error) {
+        if (error.code !== 11000) {
+          throw error; // Rethrow if it's not a duplicate key error
+        }
+      }
+    }
+
     const existingCategory = await ticketCategory.findOne({
-      name,
+      categoryName: name,
       guildId,
     });
-    // If the category already exists, return an embedded error message
+
     if (existingCategory) {
       const embed = new EmbedBuilder()
         .setColor("#FFB3BA")
@@ -76,17 +94,40 @@ execute(slash, async (interaction) => {
         });
       return interaction.reply({ embeds: [embed], ephemeral: true });
     }
-    // Create a new category with the provided name and a unique ID starting from 1 as categoryId
-    const categoryId = (await ticketCategory.find({ guildId })).length + 1;
+
+    const highestCategory = await ticketCategory
+      .find({ guildId })
+      .sort({ categoryId: -1 })
+      .limit(1);
+
+    const categoryId = highestCategory.length
+      ? highestCategory[0].categoryId + 1
+      : 1;
+
     const newCategory = new ticketCategory({
       guildId,
       categoryId,
       categoryName: name,
       roleId: role.id,
     });
-    // Save the new category to the database
-    await newCategory.save();
-    // Return a success message
+
+    try {
+      await newCategory.save();
+    } catch (error) {
+      if (error.code === 11000) {
+        const embed = new EmbedBuilder()
+          .setColor("#FFB3BA")
+          .setTitle("❌ | Klaida")
+          .setDescription("Kategorija su tokiu ID jau egzistuoja.")
+          .setFooter({
+            text: "Ada | Error",
+            iconURL: interaction.client.user.displayAvatarURL(),
+          });
+        return interaction.reply({ embeds: [embed], ephemeral: true });
+      }
+      throw error; // Rethrow if it's not a duplicate key error
+    }
+
     const embed = new EmbedBuilder()
       .setColor("#baffc9")
       .setTitle("✅ | Sėkmingas veiksmas")
@@ -99,17 +140,16 @@ execute(slash, async (interaction) => {
       });
     return interaction.reply({ embeds: [embed], ephemeral: true });
   }
+
   if (options.getSubcommand() === "remove") {
-    // Retrieve the category ID
     const categoryId = options.getInteger("id", true);
-    // Retrieve the guild ID
     const guildId = interaction.guild.id;
-    // Check if the category exists
+
     const existingCategory = await ticketCategory.findOne({
       categoryId,
       guildId,
     });
-    // If the category doesn't exist, return an embedded error message
+
     if (!existingCategory) {
       const embed = new EmbedBuilder()
         .setColor("#FFB3BA")
@@ -121,9 +161,9 @@ execute(slash, async (interaction) => {
         });
       return interaction.reply({ embeds: [embed], ephemeral: true });
     }
-    // Delete the entire category from the database - it's id, guildid, name and role associated with it
+
     await ticketCategory.deleteOne({ categoryId, guildId });
-    // Return a success message
+
     const embed = new EmbedBuilder()
       .setColor("#baffc9")
       .setTitle("✅ | Sėkmingas veiksmas")
@@ -134,12 +174,12 @@ execute(slash, async (interaction) => {
       });
     return interaction.reply({ embeds: [embed], ephemeral: true });
   }
+
   if (options.getSubcommand() === "list") {
-    // Retrieve all categories from the database
     const categories = await ticketCategory.find({
       guildId: interaction.guild.id,
     });
-    // If there are no categories, return an embedded error message
+
     if (!categories.length) {
       const embed = new EmbedBuilder()
         .setColor("#FFB3BA")
@@ -151,7 +191,7 @@ execute(slash, async (interaction) => {
         });
       return interaction.reply({ embeds: [embed], ephemeral: true });
     }
-    // Create an embedded message with all the categories
+
     const embed = new EmbedBuilder()
       .setColor("#baffc9")
       .setTitle("Bilietų kategorijos")

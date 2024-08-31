@@ -31,7 +31,10 @@ async function closeTicket(interaction) {
   // Check if the user has permission to close the ticket
   if (
     !interaction.member.roles.cache.has(supportRoleId) &&
-    !interaction.member.permissions.has(PermissionsBitField.Flags.Administrator)
+    !interaction.member.permissions.has(
+      PermissionsBitField.Flags.Administrator
+    ) &&
+    ticket.userId !== interaction.user.id
   ) {
     const noPermission = new EmbedBuilder()
       .setColor("#FFB3BA")
