@@ -26,9 +26,8 @@ const slash = new Slash({
       options: [
         {
           name: "user",
-          description: "Vartotojas kurį norite pridėti",
-          type: 6,
-          required: true,
+          description: "Vartotojas, kurį norite pridėti",
+          type: 6, // Assuming type 6 for user
         },
       ],
     },
@@ -39,9 +38,8 @@ const slash = new Slash({
       options: [
         {
           name: "user",
-          description: "Vartotojas kurį norite pašalinti",
-          type: 6,
-          required: true,
+          description: "Vartotojas, kurį norite pašalinti",
+          type: 6, // Assuming type 6 for user
         },
       ],
     },

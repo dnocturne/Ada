@@ -1,7 +1,7 @@
 import { Slash, protect, execute } from "sunar";
 import { EmbedBuilder } from "discord.js";
 import { adminOnly } from "../../protectors/only-admins.js";
-import TicketCategory from "../../schemas/tickets/ticketCategorySchema.js";
+import ticketCategory from "../../schemas/tickets/ticketCategorySchema.js";
 
 const slash = new Slash({
   name: "ticket-categories",
@@ -59,7 +59,7 @@ execute(slash, async (interaction) => {
     // Retrieve the guild ID
     const guildId = interaction.guild.id;
     // Check if the category by that name already exists
-    const existingCategory = await TicketCategory.findOne({
+    const existingCategory = await ticketCategory.findOne({
       name,
       guildId,
     });
@@ -76,8 +76,8 @@ execute(slash, async (interaction) => {
       return interaction.reply({ embeds: [embed], ephemeral: true });
     }
     // Create a new category with the provided name and a unique ID starting from 1 as categoryId
-    const categoryId = (await TicketCategory.find({ guildId })).length + 1;
-    const newCategory = new TicketCategory({
+    const categoryId = (await ticketCategory.find({ guildId })).length + 1;
+    const newCategory = new ticketCategory({
       guildId,
       categoryId,
       categoryName: name,
@@ -104,7 +104,7 @@ execute(slash, async (interaction) => {
     // Retrieve the guild ID
     const guildId = interaction.guild.id;
     // Check if the category exists
-    const existingCategory = await TicketCategory.findOne({
+    const existingCategory = await ticketCategory.findOne({
       categoryId,
       guildId,
     });
@@ -121,7 +121,7 @@ execute(slash, async (interaction) => {
       return interaction.reply({ embeds: [embed], ephemeral: true });
     }
     // Delete the entire category from the database - it's id, guildid, name and role associated with it
-    await TicketCategory.deleteOne({ categoryId, guildId });
+    await ticketCategory.deleteOne({ categoryId, guildId });
     // Return a success message
     const embed = new EmbedBuilder()
       .setColor("#baffc9")
@@ -135,7 +135,7 @@ execute(slash, async (interaction) => {
   }
   if (options.getSubcommand() === "list") {
     // Retrieve all categories from the database
-    const categories = await TicketCategory.find({
+    const categories = await ticketCategory.find({
       guildId: interaction.guild.id,
     });
     // If there are no categories, return an embedded error message

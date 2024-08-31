@@ -9,8 +9,9 @@ import {
 } from "discord.js";
 import ticketSchema from "../../schemas/tickets/ticketSchema.js";
 import ticketSetupSchema from "../../schemas/tickets/ticketSetupSchema.js";
-import TicketCategory from "../../schemas/tickets/ticketCategorySchema.js";
+import ticketCategory from "../../schemas/tickets/ticketCategorySchema.js";
 import ticketSettingsSchema from "../../schemas/tickets/ticketSettingsSchema.js";
+import ticketExtrasSchema from "../../schemas/tickets/ticketExtrasSchema.js";
 
 async function openTicket(interaction) {
   // Create the close ticket button
@@ -58,7 +59,7 @@ async function openTicket(interaction) {
         .setColor("#FFB3BA")
         .setTitle("❌ | Klaida")
         .setDescription(
-          `Jūs jau turite ${userTickets.length} atidarytų bilietų. Bilietų limitas yra ${ticketLimit}.`
+          `Šis asmuo jau turi ${userTickets.length} atidarytų bilietų ir viršijo limitą, tačiau yra administratorius ir jam negalioja limitas.`
         )
         .setFooter({
           text: "Ada | Error",
@@ -73,7 +74,7 @@ async function openTicket(interaction) {
   }
 
   // Fetch available categories
-  const categories = await TicketCategory.find({ guildId });
+  const categories = await ticketCategory.find({ guildId });
   if (categories.length === 0) {
     const noCategories = new EmbedBuilder()
       .setColor("#FFB3BA")
@@ -213,6 +214,25 @@ async function openTicket(interaction) {
       embeds: [ticketChannelMessage],
       components: [row],
     });
+
+    // Fetch and send extras if they exist for the selected category
+    const extras = await ticketExtrasSchema.find({
+      categoryId: selectedCategoryId,
+    });
+    if (extras.length > 0) {
+      for (const extra of extras) {
+        const extraMessage = new EmbedBuilder()
+          .setColor("#baffc9")
+          .setTitle("📄 | Papildoma informacija")
+          .setDescription(extra.extrasContent)
+          .setFooter({
+            text: "Ada | Ticket System",
+            iconURL: interaction.client.user.displayAvatarURL(),
+          });
+
+        await ticketChannel.send({ embeds: [extraMessage] });
+      }
+    }
 
     // If the user is an admin and exceeded the ticket limit, send a warning message in the ticket channel
     if (

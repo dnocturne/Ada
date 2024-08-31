@@ -14,7 +14,7 @@ import { adminOnly } from "../../protectors/only-admins.js";
 import ticketSetupSchema from "../../schemas/tickets/ticketSetupSchema.js";
 import ticketSettingsSchema from "../../schemas/tickets/ticketSettingsSchema.js";
 import ticketSchema from "../../schemas/tickets/ticketSchema.js";
-import TicketCategory from "../../schemas/tickets/ticketCategorySchema.js";
+import ticketCategory from "../../schemas/tickets/ticketCategorySchema.js";
 import openTicket from "../../functions/tickets/openTicket.js";
 
 const slash = new Slash({
@@ -126,7 +126,7 @@ execute(slash, async (interaction) => {
     await ticketSetupSchema.deleteOne({ guildId: interaction.guildId });
     await ticketSettingsSchema.deleteOne({ guildId: interaction.guildId });
     await ticketSchema.deleteMany({ guildId: interaction.guildId });
-    await TicketCategory.deleteMany({ guildId: interaction.guildId });
+    await ticketCategory.deleteMany({ guildId: interaction.guildId });
 
     // Send a confirmation
     const embed = new EmbedBuilder()
