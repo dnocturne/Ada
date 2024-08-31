@@ -245,7 +245,7 @@ async function openTicket(interaction) {
         .setColor("#ffdfba")
         .setTitle("⚠️ | Įspėjimas")
         .setDescription(
-          `Jūs jau turite ${userTickets.length} atidarytų bilietų. Bilietų limitas yra ${ticketLimit}.`
+          `Šis asmuo jau turi ${userTickets.length} atidarytų bilietų ir viršijo limitą, tačiau yra administratorius ir limitas jam negalioja!`
         )
         .setFooter({
           text: "Ada | Warning",
