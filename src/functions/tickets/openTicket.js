@@ -242,7 +242,7 @@ async function openTicket(interaction) {
       )
     ) {
       const adminWarningMessage = new EmbedBuilder()
-        .setColor("#FFB3BA")
+        .setColor("#ffdfba")
         .setTitle("⚠️ | Įspėjimas")
         .setDescription(
           `Jūs jau turite ${userTickets.length} atidarytų bilietų. Bilietų limitas yra ${ticketLimit}.`
