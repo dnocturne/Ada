@@ -187,7 +187,8 @@ async function openTicket(interaction) {
       ephemeral: true,
     });
 
-    // Send a message to the ticket channel
+    // Send a message to the ticket channel, add the close button and mention @everyone
+
     const ticketChannelMessage = new EmbedBuilder()
       .setColor("#baffc9")
       .setTitle("🎫 | Bilietas atidarytas")
@@ -212,6 +213,7 @@ async function openTicket(interaction) {
     const row = new ActionRowBuilder().addComponents(closeTicketButton);
 
     await ticketChannel.send({
+      content: "@everyone",
       embeds: [ticketChannelMessage],
       components: [row],
     });
