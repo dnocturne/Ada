@@ -57,12 +57,23 @@ async function handleCloseTicketReason(interaction, reason) {
           .setTitle("🎫 | Bilietas uždarytas")
           .setDescription(`Bilietas **${channelName}** buvo uždarytas.`) // Use the captured channel name
           .addFields(
-            { name: "Uždarė", value: interaction.user.tag },
             {
-              name: "Priežastis",
+              name: "👤 Uždarė",
+              value: `<@${interaction.user.id}>`,
+              inline: true,
+            },
+            {
+              name: "📄 Priežastis",
               value: reason || "Nenurodyta",
+              inline: true,
+            },
+            {
+              name: "⏰ Uždarymo laikas",
+              value: `<t:${Math.floor(Date.now() / 1000)}:F>`,
+              inline: true,
             }
           )
+          .setThumbnail(interaction.user.displayAvatarURL({ dynamic: true }))
           .setFooter({
             text: "Ada | Ticket System",
             iconURL: interaction.client.user.displayAvatarURL(),
