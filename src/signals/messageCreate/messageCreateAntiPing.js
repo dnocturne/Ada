@@ -20,9 +20,10 @@ execute(signal, async (message) => {
       // Ignore self-mentions
       if (userId === message.author.id) continue;
 
-      // Check if the mentioned user has the anti-ping system enabled
+      // Check if the mentioned user has the anti-ping system enabled in this guild
       const antiPingUser = await antiPingUserSchema.findOne({
         userId,
+        guildId: message.guild.id,
         enabled: true,
       });
 
