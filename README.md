@@ -9,6 +9,7 @@ Ada is coded and made for a few Lithuanian communities. I don't have an interest
 ## Features 🚀
 
 - **Ticket System**: Ticket System with configurable categories and custom support roles for each category.
+- **Anti Ping System**: Configurable anti ping system with three response types and configurable roles that can access the antiping system. Allows setting a custom message.
 
 ## Getting Started 👨‍💻
 
