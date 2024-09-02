@@ -50,7 +50,7 @@ execute(signal, async (message) => {
           .setColor("#FFB3BA")
           .setTitle("❌ | Anti Ping")
           .setDescription(`${customMessage}`)
-          .addFields({ name: "User", value: `${user}` })
+          .addFields({ name: "Ši žinutė yra nuo", value: `${user}` })
           .setFooter({
             text: "Ada | Anti Ping",
             iconURL: message.client.user.displayAvatarURL(),
@@ -64,25 +64,23 @@ execute(signal, async (message) => {
             embeds: [embed],
           });
         } else if (replyMethod === "sameChannelKeep") {
-          // Send the embed in the same channel without deleting the original message
+          // Send the embed in the same channel and delete the original message
           await message.channel.send({
             content: `${message.author}`,
             embeds: [embed],
           });
+          // Delete the original message
+          await message.delete();
         } else if (replyMethod === "sameChannelDelete") {
-          // Send the embed in the same channel and delete the original message after a delay
+          // Send the embed in the same channel and delete both messages after a delay
           const sentMessage = await message.channel.send({
             content: `${message.author}`,
             embeds: [embed],
           });
-          setTimeout(() => {
-            sentMessage.delete();
+          setTimeout(async () => {
+            await sentMessage.delete();
+            await message.delete();
           }, 5000); // Adjust the delay as needed
-        }
-
-        // Delete the original message if the reply method is not "sameChannelKeep"
-        if (replyMethod !== "sameChannelKeep") {
-          await message.delete();
         }
 
         // Break the loop after the first match to avoid multiple deletions and messages
