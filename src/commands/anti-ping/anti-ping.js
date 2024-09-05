@@ -24,6 +24,19 @@ const slash = new Slash({
       description: "Išjungti anti ping sistemą",
       type: 1,
     },
+    {
+      name: "view",
+      description: "Peržiūrėti anti ping žinutę",
+      type: 1,
+      options: [
+        {
+          name: "user",
+          description: "Vartotojas, kurio anti ping žinutę norite peržiūrėti",
+          type: 6, // USER type
+          required: false,
+        },
+      ],
+    },
   ],
 });
 
@@ -125,6 +138,39 @@ execute(slash, async (interaction) => {
         iconURL: interaction.client.user.displayAvatarURL(),
       });
     await interaction.reply({ embeds: [embed], ephemeral: true });
+  }
+
+  if (options.getSubcommand() === "view") {
+    const targetUser = options.getUser("user") || interaction.user;
+    const targetUserId = targetUser.id;
+
+    // Fetch the anti-ping message for the specified user
+    const antiPingUser = await antiPingUserSchema.findOne({
+      userId: targetUserId,
+      guildId,
+    });
+
+    if (antiPingUser) {
+      const embed = new EmbedBuilder()
+        .setColor("#baffc9")
+        .setTitle("✅ | Anti Ping Žinutė")
+        .setDescription(antiPingUser.userMessage)
+        .setFooter({
+          text: "Ada | Anti Ping",
+          iconURL: interaction.client.user.displayAvatarURL(),
+        });
+      await interaction.reply({ embeds: [embed], ephemeral: true });
+    } else {
+      const embed = new EmbedBuilder()
+        .setColor("#FFB3BA")
+        .setTitle("❌ | Klaida")
+        .setDescription("Šis vartotojas neturi nustatytos anti ping žinutės.")
+        .setFooter({
+          text: "Ada | Error",
+          iconURL: interaction.client.user.displayAvatarURL(),
+        });
+      await interaction.reply({ embeds: [embed], ephemeral: true });
+    }
   }
 });
 
