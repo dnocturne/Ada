@@ -190,7 +190,7 @@ execute(modal, async (interaction) => {
     .setFields(
       {
         name: "Žodžių limitas archyvuojant bilietus",
-        value: "`/ticket-settings words` Numatyta: 0 (neribota)",
+        value: "`/ticketsettings word-limit` Numatyta: 0 (neribota)",
       },
       {
         name: "Archyvų kanalas",
@@ -199,7 +199,11 @@ execute(modal, async (interaction) => {
       {
         name: "Bilietų limitas vienam vartotojui",
         value:
-          "`/ticket-settings limit` Numatyta: 1 (vienas bilietas vienam vartotojui)",
+          "`/ticket-settings ticket-limit` Numatyta: 1 (vienas bilietas vienam vartotojui)",
+      },
+      {
+        name: "Taipogi galite pridėti papildomų žinučių siunčiamų į kategorijas",
+        value: "`/ticket-extras`",
       }
     )
     .setFooter({
