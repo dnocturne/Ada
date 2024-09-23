@@ -3,5 +3,18 @@
     "Owners_ID": [
       "INSERT YOUR ID HERE TO ENABLE OWNER-ONLY COMMANDS."
     ]
+  },
+  "Status": {
+    "interval": 15000,
+    "statuses": [
+      {
+        "text": "with tickets",
+        "type": "PLAYING"
+      },
+      {
+        "text": "with guests!",
+        "type": "PLAYING"
+      }
+    ]
   }
 }
