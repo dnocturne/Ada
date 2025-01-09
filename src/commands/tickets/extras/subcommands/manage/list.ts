@@ -1,5 +1,5 @@
 import { Group, execute } from "sunar";
-import { EmbedBuilder, ChatInputCommandInteraction } from "discord.js";
+import { EmbedBuilder, ChatInputCommandInteraction, MessageFlags } from "discord.js";
 import ticketExtrasSchema from "../../../../../schemas/tickets/ticketExtrasSchema";
 import ticketSetupSchema from "../../../../../schemas/tickets/ticketSetupSchema";
 import ticketCategorySchema from "../../../../../schemas/tickets/ticketCategorySchema";
@@ -17,7 +17,7 @@ execute(group, async (interaction: ChatInputCommandInteraction) => {
           text: "Ada | Error",
           iconURL: interaction.client.user.displayAvatarURL(),
         });
-      return interaction.reply({ embeds: [embed], ephemeral: true });
+      return interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
     }
 
     // Check if ticketSetupSchema exists for the guild
@@ -33,7 +33,7 @@ execute(group, async (interaction: ChatInputCommandInteraction) => {
           text: "Ada | Error",
           iconURL: interaction.client.user.displayAvatarURL(),
         });
-      return interaction.reply({ embeds: [embed], ephemeral: true });
+      return interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
     }
 
     // Check if ticket categories exist for the guild
@@ -48,7 +48,7 @@ execute(group, async (interaction: ChatInputCommandInteraction) => {
           text: "Ada | Error",
           iconURL: interaction.client.user.displayAvatarURL(),
         });
-      return interaction.reply({ embeds: [embed], ephemeral: true });
+      return interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
     }
 
     // Retrieve all extras from the database
@@ -66,7 +66,7 @@ execute(group, async (interaction: ChatInputCommandInteraction) => {
           text: "Ada | Error",
           iconURL: interaction.client.user.displayAvatarURL(),
         });
-      return interaction.reply({ embeds: [embed], ephemeral: true });
+      return interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
     }
 
     // Create an embedded message with all the extras
@@ -84,11 +84,11 @@ execute(group, async (interaction: ChatInputCommandInteraction) => {
         text: "Ada | Ticket System",
         iconURL: interaction.client.user.displayAvatarURL(),
       });
-    return interaction.reply({ embeds: [embed], ephemeral: true });
+    return interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
   } catch (error) {
     console.error('Error in ticket-extras list command:', error);
     if (!interaction.replied && !interaction.deferred) {
-      await interaction.reply({ content: 'An error occurred while processing your command.', ephemeral: true });
+      await interaction.reply({ content: 'An error occurred while processing your command.', flags: MessageFlags.Ephemeral });
     } else {
       await interaction.editReply({ content: 'An error occurred while processing your command.' });
     }

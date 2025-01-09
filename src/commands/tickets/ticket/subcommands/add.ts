@@ -5,21 +5,22 @@ import {
   ChannelType,
   ChatInputCommandInteraction,
   GuildMember,
-  TextChannel
+  TextChannel,
+  MessageFlags,
 } from "discord.js";
 import ticketSchema from "../../../../schemas/tickets/ticketSchema";
 
-const group = new Group("ticket", "manage", "add");
+const group = new Group("ticket", "add");
 
 execute(group, async (interaction: ChatInputCommandInteraction) => {
   try {
     if (!interaction.guild || !interaction.member) {
-      await interaction.reply({ content: "This command can only be used in a server.", ephemeral: true });
+      await interaction.reply({ content: "This command can only be used in a server.", flags: MessageFlags.Ephemeral });
       return;
     }
 
     const member = interaction.member as GuildMember;
-    await interaction.deferReply({ ephemeral: true });
+    await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
     if (!interaction.channel || interaction.channel.type === ChannelType.DM) {
       await interaction.editReply({ 
@@ -114,7 +115,7 @@ execute(group, async (interaction: ChatInputCommandInteraction) => {
   } catch (error) {
     console.error('Error in ticket add command:', error);
     if (!interaction.replied && !interaction.deferred) {
-      await interaction.reply({ content: 'An error occurred while processing your command.', ephemeral: true });
+      await interaction.reply({ content: 'An error occurred while processing your command.', flags: MessageFlags.Ephemeral });
     } else {
       await interaction.editReply({ content: 'An error occurred while processing your command.' });
     }

@@ -1,5 +1,5 @@
 import { Group, execute } from "sunar";
-import { EmbedBuilder, ChatInputCommandInteraction } from "discord.js";
+import { EmbedBuilder, ChatInputCommandInteraction, MessageFlags } from "discord.js";
 import ticketSetupSchema from "../../../../../schemas/tickets/ticketSetupSchema";
 import ticketSettingsSchema from "../../../../../schemas/tickets/ticketSettingsSchema";
 import ticketSchema from "../../../../../schemas/tickets/ticketSchema";
@@ -19,7 +19,7 @@ execute(group, async (interaction: ChatInputCommandInteraction) => {
           text: "Ada | Error",
           iconURL: interaction.client.user.displayAvatarURL(),
         });
-      return interaction.reply({ embeds: [embed], ephemeral: true });
+      return interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
     }
 
     // Remove ticketSchema, ticketSettingsSchema, ticketSetupSchema, ticketCategorySchema, ticketExtraSchema data relevant to the guild
@@ -38,11 +38,11 @@ execute(group, async (interaction: ChatInputCommandInteraction) => {
         text: "Ada | Ticket System",
         iconURL: interaction.client.user.displayAvatarURL(),
       });
-    return interaction.reply({ embeds: [embed], ephemeral: true });
+    return interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
   } catch (error) {
     console.error('Error in ticket-setup remove command:', error);
     if (!interaction.replied && !interaction.deferred) {
-      await interaction.reply({ content: 'An error occurred while processing your command.', ephemeral: true });
+      await interaction.reply({ content: 'An error occurred while processing your command.', flags: MessageFlags.Ephemeral });
     } else {
       await interaction.editReply({ content: 'An error occurred while processing your command.' });
     }

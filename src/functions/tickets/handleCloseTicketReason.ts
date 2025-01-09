@@ -1,4 +1,4 @@
-import { EmbedBuilder, ChatInputCommandInteraction, ModalSubmitInteraction, TextChannel } from "discord.js";
+import { EmbedBuilder, ChatInputCommandInteraction, ModalSubmitInteraction, TextChannel, MessageFlags } from "discord.js";
 import ticketSchema from "../../schemas/tickets/ticketSchema";
 import ticketSettingsSchema from "../../schemas/tickets/ticketSettingsSchema";
 import discordTranscripts from "discord-html-transcripts";
@@ -10,14 +10,14 @@ async function handleCloseTicketReason(
   if (!interaction.guild) {
     return interaction.reply({ 
       content: "This command can only be used in a server.", 
-      ephemeral: true 
+      flags: MessageFlags.Ephemeral 
     });
   }
 
   if (!interaction.channel || !(interaction.channel instanceof TextChannel)) {
     return interaction.reply({ 
       content: "This command can only be used in a server text channel.", 
-      ephemeral: true 
+      flags: MessageFlags.Ephemeral 
     });
   }
 
@@ -37,13 +37,13 @@ async function handleCloseTicketReason(
         iconURL: interaction.client.user.displayAvatarURL(),
       });
 
-    return interaction.reply({ embeds: [noTicket], ephemeral: true });
+    return interaction.reply({ embeds: [noTicket], flags: MessageFlags.Ephemeral });
   }
 
   // Acknowledge the interaction before deleting the channel
   await interaction.reply({
     content: "Bilietas uždaromas...",
-    ephemeral: true,
+    flags: MessageFlags.Ephemeral,
   });
 
   // Generate the transcript

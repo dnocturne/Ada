@@ -7,6 +7,7 @@ import {
   ActionRowBuilder,
   ChatInputCommandInteraction,
   ModalSubmitInteraction,
+  MessageFlags,
 } from "discord.js";
 import ticketExtrasSchema from "../../../../../schemas/tickets/ticketExtrasSchema";
 import ticketSetupSchema from "../../../../../schemas/tickets/ticketSetupSchema";
@@ -25,7 +26,7 @@ execute(group, async (interaction: ChatInputCommandInteraction) => {
           text: "Ada | Error",
           iconURL: interaction.client.user.displayAvatarURL(),
         });
-      return interaction.reply({ embeds: [embed], ephemeral: true });
+      return interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
     }
 
     // Check if ticketSetupSchema exists for the guild
@@ -41,7 +42,7 @@ execute(group, async (interaction: ChatInputCommandInteraction) => {
           text: "Ada | Error",
           iconURL: interaction.client.user.displayAvatarURL(),
         });
-      return interaction.reply({ embeds: [embed], ephemeral: true });
+      return interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
     }
 
     // Check if ticket categories exist for the guild
@@ -56,7 +57,7 @@ execute(group, async (interaction: ChatInputCommandInteraction) => {
           text: "Ada | Error",
           iconURL: interaction.client.user.displayAvatarURL(),
         });
-      return interaction.reply({ embeds: [embed], ephemeral: true });
+      return interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
     }
 
     // Ensure the compound index is created if it doesn't exist
@@ -101,7 +102,7 @@ execute(group, async (interaction: ChatInputCommandInteraction) => {
   } catch (error) {
     console.error('Error in ticket-extras create command:', error);
     if (!interaction.replied && !interaction.deferred) {
-      await interaction.reply({ content: 'An error occurred while processing your command.', ephemeral: true });
+      await interaction.reply({ content: 'An error occurred while processing your command.', flags: MessageFlags.Ephemeral });
     } else {
       await interaction.editReply({ content: 'An error occurred while processing your command.' });
     }
@@ -123,7 +124,7 @@ execute(modal, async (interaction: ModalSubmitInteraction) => {
           text: "Ada | Error",
           iconURL: interaction.client.user.displayAvatarURL(),
         });
-      return interaction.reply({ embeds: [embed], ephemeral: true });
+      return interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
     }
 
     // Retrieve the content from the TextInput
@@ -147,7 +148,7 @@ execute(modal, async (interaction: ModalSubmitInteraction) => {
           text: "Ada | Error",
           iconURL: interaction.client.user.displayAvatarURL(),
         });
-      return interaction.reply({ embeds: [embed], ephemeral: true });
+      return interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
     }
 
     // Save the content to the database
@@ -176,7 +177,7 @@ execute(modal, async (interaction: ModalSubmitInteraction) => {
           text: "Ada | Ticket System",
           iconURL: interaction.client.user.displayAvatarURL(),
         });
-      return interaction.reply({ embeds: [embed], ephemeral: true });
+      return interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
     } catch (error) {
       if (error && typeof error === 'object' && 'code' in error && error.code === 11000) {
         const embed = new EmbedBuilder()
@@ -187,14 +188,14 @@ execute(modal, async (interaction: ModalSubmitInteraction) => {
             text: "Ada | Error",
             iconURL: interaction.client.user.displayAvatarURL(),
           });
-        return interaction.reply({ embeds: [embed], ephemeral: true });
+        return interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
       }
       throw error;
     }
   } catch (error) {
     console.error('Error in ticket-extras modal:', error);
     if (!interaction.replied) {
-      await interaction.reply({ content: 'An error occurred while processing your command.', ephemeral: true });
+      await interaction.reply({ content: 'An error occurred while processing your command.', flags: MessageFlags.Ephemeral });
     }
   }
 });

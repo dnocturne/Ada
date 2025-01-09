@@ -5,10 +5,22 @@ import {
   TextInputBuilder,
   ActionRowBuilder,
   TextInputStyle,
+  ChatInputCommandInteraction,
+  ButtonInteraction,
+  GuildMember,
+  InteractionReplyOptions,
+  MessageFlags,
 } from "discord.js";
 import ticketSchema from "../../schemas/tickets/ticketSchema.js";
 
-async function closeTicket(interaction) {
+async function closeTicket(interaction: ChatInputCommandInteraction | ButtonInteraction) {
+  if (!interaction.channel) {
+    const response: InteractionReplyOptions = { 
+      content: "This command can only be used in a channel.", 
+      ephemeral: true
+    };
+    return interaction.deferred ? interaction.editReply(response) : interaction.reply(response);
+  }
   const channelId = interaction.channel.id;
 
   // Fetch the ticket information from the database
@@ -23,10 +35,22 @@ async function closeTicket(interaction) {
         iconURL: interaction.client.user.displayAvatarURL(),
       });
 
-    return interaction.reply({ embeds: [noTicket], ephemeral: true });
+    const response: InteractionReplyOptions = { 
+      embeds: [noTicket], 
+      ephemeral: true
+    };
+    return interaction.deferred ? interaction.editReply(response) : interaction.reply(response);
   }
 
   const supportRoleId = ticket.supportRoleId;
+
+  if (!interaction.member || !(interaction.member instanceof GuildMember)) {
+    const response: InteractionReplyOptions = { 
+      content: "This command can only be used by server members.", 
+      ephemeral: true
+    };
+    return interaction.deferred ? interaction.editReply(response) : interaction.reply(response);
+  }
 
   // Check if the user has permission to close the ticket
   if (
@@ -45,7 +69,11 @@ async function closeTicket(interaction) {
         iconURL: interaction.client.user.displayAvatarURL(),
       });
 
-    return interaction.reply({ embeds: [noPermission], ephemeral: true });
+    const response: InteractionReplyOptions = { 
+      embeds: [noPermission], 
+      flags: MessageFlags.Ephemeral
+    };
+    return interaction.deferred ? interaction.editReply(response) : interaction.reply(response);
   }
 
   const contentInput = new TextInputBuilder()
@@ -62,7 +90,14 @@ async function closeTicket(interaction) {
     .setTitle("Įrašykite bilieto uždarymo priežastį")
     .setComponents(row);
 
-  interaction.showModal(modal);
+  // If the interaction is deferred, we need to edit the reply before showing the modal
+  if (interaction.deferred) {
+    await interaction.editReply({ 
+      content: "Prašome įvesti uždarymo priežastį...",
+    });
+  }
+  
+  await interaction.showModal(modal);
 }
 
 export default closeTicket;

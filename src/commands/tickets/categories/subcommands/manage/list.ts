@@ -1,5 +1,5 @@
 import { Group, execute } from "sunar";
-import { EmbedBuilder, ChatInputCommandInteraction } from "discord.js";
+import { EmbedBuilder, ChatInputCommandInteraction, MessageFlags } from "discord.js";
 import ticketCategory from "../../../../../schemas/tickets/ticketCategorySchema";
 
 const group = new Group("ticket-categories", "manage", "list");
@@ -7,11 +7,11 @@ const group = new Group("ticket-categories", "manage", "list");
 execute(group, async (interaction: ChatInputCommandInteraction) => {
   try {
     if (!interaction.guild) {
-      await interaction.reply({ content: "This command can only be used in a server.", ephemeral: true });
+      await interaction.reply({ content: "This command can only be used in a server.", flags: MessageFlags.Ephemeral });
       return;
     }
 
-    await interaction.deferReply({ ephemeral: true });
+    await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
     const categories = await ticketCategory.find({
       guildId: interaction.guild.id,
@@ -48,7 +48,7 @@ execute(group, async (interaction: ChatInputCommandInteraction) => {
   } catch (error) {
     console.error('Error in ticket-categories list command:', error);
     if (!interaction.replied && !interaction.deferred) {
-      await interaction.reply({ content: 'An error occurred while processing your command.', ephemeral: true });
+      await interaction.reply({ content: 'An error occurred while processing your command.', flags: MessageFlags.Ephemeral });
     } else {
       await interaction.editReply({ content: 'An error occurred while processing your command.' });
     }

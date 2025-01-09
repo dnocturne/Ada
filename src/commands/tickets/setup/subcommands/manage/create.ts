@@ -10,6 +10,7 @@ import {
   ChatInputCommandInteraction,
   ModalSubmitInteraction,
   TextChannel,
+  MessageFlags,
 } from "discord.js";
 import ticketSetupSchema from "../../../../../schemas/tickets/ticketSetupSchema";
 import ticketSettingsSchema from "../../../../../schemas/tickets/ticketSettingsSchema";
@@ -27,7 +28,7 @@ execute(group, async (interaction: ChatInputCommandInteraction) => {
           text: "Ada | Error",
           iconURL: interaction.client.user.displayAvatarURL(),
         });
-      return interaction.reply({ embeds: [embed], ephemeral: true });
+      return interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
     }
 
     // Retrieve category and channel for mongodb
@@ -54,7 +55,7 @@ execute(group, async (interaction: ChatInputCommandInteraction) => {
     if (existingTicketSetup && existingTicketSettings) {
       return interaction.reply({
         embeds: [ticketSystemExists],
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
       });
     }
 
@@ -98,7 +99,7 @@ execute(group, async (interaction: ChatInputCommandInteraction) => {
   } catch (error) {
     console.error('Error in ticket-setup create command:', error);
     if (!interaction.replied && !interaction.deferred) {
-      await interaction.reply({ content: 'An error occurred while processing your command.', ephemeral: true });
+      await interaction.reply({ content: 'An error occurred while processing your command.', flags: MessageFlags.Ephemeral });
     } else {
       await interaction.editReply({ content: 'An error occurred while processing your command.' });
     }
@@ -120,7 +121,7 @@ execute(modal, async (interaction: ModalSubmitInteraction) => {
           text: "Ada | Error",
           iconURL: interaction.client.user.displayAvatarURL(),
         });
-      return interaction.reply({ embeds: [embed], ephemeral: true });
+      return interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
     }
 
     // Retrieve the content from the text input
@@ -141,7 +142,7 @@ execute(modal, async (interaction: ModalSubmitInteraction) => {
           text: "Ada | Error",
           iconURL: interaction.client.user.displayAvatarURL(),
         });
-      return interaction.reply({ embeds: [embed], ephemeral: true });
+      return interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
     }
 
     // Send the ticket message with the input data
@@ -197,12 +198,12 @@ execute(modal, async (interaction: ModalSubmitInteraction) => {
 
     await interaction.reply({
       embeds: [ticketSystemSetup],
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral,
     });
   } catch (error) {
     console.error('Error in ticket-setup modal:', error);
     if (!interaction.replied) {
-      await interaction.reply({ content: 'An error occurred while processing your command.', ephemeral: true });
+      await interaction.reply({ content: 'An error occurred while processing your command.', flags: MessageFlags.Ephemeral });
     }
   }
 });

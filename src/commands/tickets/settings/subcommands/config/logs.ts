@@ -1,5 +1,5 @@
 import { Group, execute } from "sunar";
-import { EmbedBuilder, ChatInputCommandInteraction } from "discord.js";
+import { EmbedBuilder, ChatInputCommandInteraction, MessageFlags } from "discord.js";
 import ticketSetupSchema from "../../../../../schemas/tickets/ticketSetupSchema";
 import ticketSettingsSchema from "../../../../../schemas/tickets/ticketSettingsSchema";
 
@@ -7,7 +7,7 @@ const group = new Group("ticket-settings", "config", "logs");
 
 execute(group, async (interaction: ChatInputCommandInteraction) => {
   if (!interaction.guild) {
-    return interaction.reply({ content: "This command can only be used in a server.", ephemeral: true });
+    return interaction.reply({ content: "This command can only be used in a server.", flags: MessageFlags.Ephemeral });
   }
 
   const guildId = interaction.guild.id;
@@ -26,7 +26,7 @@ execute(group, async (interaction: ChatInputCommandInteraction) => {
       });
     return interaction.reply({
       embeds: [embed],
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral,
     });
   }
 
@@ -52,7 +52,7 @@ execute(group, async (interaction: ChatInputCommandInteraction) => {
     });
   return interaction.reply({
     embeds: [embed],
-    ephemeral: true,
+    flags: MessageFlags.Ephemeral,
   });
 });
 

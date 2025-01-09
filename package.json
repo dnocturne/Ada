@@ -30,5 +30,8 @@
     "gamedig": "^5.1.4",
     "mongoose": "^8.9.3",
     "sunar": "^0.6.1"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4"
   }
 }

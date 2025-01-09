@@ -14,6 +14,8 @@ import {
   InteractionResponse,
   MessageComponentInteraction,
   StringSelectMenuInteraction,
+  InteractionReplyOptions,
+  MessageFlags,
 } from "discord.js";
 import ticketSchema from "../../schemas/tickets/ticketSchema";
 import ticketSetupSchema from "../../schemas/tickets/ticketSetupSchema";
@@ -25,10 +27,11 @@ async function openTicket(
   interaction: ChatInputCommandInteraction | ButtonInteraction
 ) {
   if (!interaction.guild || !interaction.member || !interaction.channel) {
-    return interaction.reply({
+    const response: InteractionReplyOptions = {
       content: "This command can only be used in a server.",
-      ephemeral: true
-    });
+      flags: MessageFlags.Ephemeral
+    };
+    return interaction.deferred ? interaction.editReply(response) : interaction.reply(response);
   }
 
   const member = interaction.member as GuildMember;
@@ -56,7 +59,11 @@ async function openTicket(
         iconURL: interaction.client.user.displayAvatarURL(),
       });
 
-    return interaction.reply({ embeds: [noTicketSystem], ephemeral: true });
+    const response: InteractionReplyOptions = {
+      embeds: [noTicketSystem],
+      flags: MessageFlags.Ephemeral
+    };
+    return interaction.deferred ? interaction.editReply(response) : interaction.reply(response);
   }
 
   // Fetch ticket settings
@@ -83,10 +90,11 @@ async function openTicket(
           iconURL: interaction.client.user.displayAvatarURL(),
         });
 
-      return interaction.reply({
+      const response: InteractionReplyOptions = {
         embeds: [ticketLimitMessage],
-        ephemeral: true,
-      });
+        flags: MessageFlags.Ephemeral
+      };
+      return interaction.deferred ? interaction.editReply(response) : interaction.reply(response);
     }
   }
 
@@ -102,7 +110,11 @@ async function openTicket(
         iconURL: interaction.client.user.displayAvatarURL(),
       });
 
-    return interaction.reply({ embeds: [noCategories], ephemeral: true });
+    const response: InteractionReplyOptions = {
+      embeds: [noCategories],
+      flags: MessageFlags.Ephemeral
+    };
+    return interaction.deferred ? interaction.editReply(response) : interaction.reply(response);
   }
 
   // Create a dropdown menu for category selection
@@ -123,11 +135,17 @@ async function openTicket(
     .setTitle("🎫 | Pasirinkite bilietų kategoriją")
     .setDescription("Pasirinkite kategoriją iš žemiau esančio meniu.");
 
-  await interaction.reply({
+  const response: InteractionReplyOptions = {
     embeds: [categorySelectMessage],
     components: [row],
-    ephemeral: true,
-  });
+    flags: MessageFlags.Ephemeral
+  };
+  
+  if (interaction.deferred) {
+    await interaction.editReply(response);
+  } else {
+    await interaction.reply(response);
+  }
 
   // Handle category selection
   const filter = (i: MessageComponentInteraction): i is StringSelectMenuInteraction => 
@@ -212,7 +230,6 @@ async function openTicket(
     });
 
     // Send a message to the ticket channel, add the close button and mention @everyone
-
     const ticketChannelMessage = new EmbedBuilder()
       .setColor("#baffc9")
       .setTitle("🎫 | Bilietas atidarytas")
@@ -286,10 +303,12 @@ async function openTicket(
 
   collector.on("end", (collected: Collection<string, MessageComponentInteraction>) => {
     if (collected.size === 0) {
-      interaction.editReply({
-        content: "Laikas baigėsi, bandykite dar kartą.",
-        components: [],
-      });
+      if (interaction.deferred) {
+        interaction.editReply({
+          content: "Laikas baigėsi, bandykite dar kartą.",
+          components: [],
+        });
+      }
     }
   });
 }

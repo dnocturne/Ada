@@ -15,7 +15,7 @@ const adminOnly = new Protector({
 const content = "Tik administratoriai gali naudotis šia komandą!";
 
 /** @param {PermissionsBitField | string | undefined} permissions */
-function checkIsAdmin(permissions) {
+function checkIsAdmin(permissions: PermissionsBitField | string | undefined) {
   if (!permissions || typeof permissions === "string") return false;
   return permissions.has(PermissionFlagsBits.Administrator);
 }

@@ -1,5 +1,5 @@
 import { Group, execute } from "sunar";
-import { EmbedBuilder, ChatInputCommandInteraction } from "discord.js";
+import { EmbedBuilder, ChatInputCommandInteraction, MessageFlags } from "discord.js";
 import antiPingUserSchema from "../../../schemas/anti-ping/antiPingUserSchema";
 
 const group = new Group("antiping", "manage", "view");
@@ -14,7 +14,7 @@ execute(group, async (interaction: ChatInputCommandInteraction) => {
         text: "Ada | Error",
         iconURL: interaction.client.user.displayAvatarURL(),
       });
-    await interaction.reply({ embeds: [embed], ephemeral: true });
+    await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
     return;
   }
 
@@ -36,7 +36,7 @@ execute(group, async (interaction: ChatInputCommandInteraction) => {
         text: "Ada | Anti Ping",
         iconURL: interaction.client.user.displayAvatarURL(),
       });
-    await interaction.reply({ embeds: [embed], ephemeral: true });
+    await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
   } else {
     const embed = new EmbedBuilder()
       .setColor("#FFB3BA")
@@ -46,7 +46,7 @@ execute(group, async (interaction: ChatInputCommandInteraction) => {
         text: "Ada | Error",
         iconURL: interaction.client.user.displayAvatarURL(),
       });
-    await interaction.reply({ embeds: [embed], ephemeral: true });
+    await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
   }
 });
 

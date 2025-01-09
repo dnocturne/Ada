@@ -9,6 +9,7 @@ import {
   ChatInputCommandInteraction,
   ModalSubmitInteraction,
   GuildMember,
+  MessageFlags
 } from "discord.js";
 import antiPingSettingsSchema from "../../../schemas/anti-ping/antiPingSettingsSchema";
 import antiPingUserSchema from "../../../schemas/anti-ping/antiPingUserSchema";
@@ -25,7 +26,7 @@ execute(group, async (interaction: ChatInputCommandInteraction) => {
         text: "Ada | Error",
         iconURL: interaction.client.user.displayAvatarURL(),
       });
-    await interaction.reply({ embeds: [embed], ephemeral: true });
+    await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
     return;
   }
 
@@ -52,7 +53,7 @@ execute(group, async (interaction: ChatInputCommandInteraction) => {
         text: "Ada | Error",
         iconURL: interaction.client.user.displayAvatarURL(),
       });
-    await interaction.reply({ embeds: [embed], ephemeral: true });
+    await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
   }
 });
 
@@ -88,7 +89,7 @@ execute(modal, async (interaction: ModalSubmitInteraction) => {
         text: "Ada | Error",
         iconURL: interaction.client.user.displayAvatarURL(),
       });
-    await interaction.reply({ embeds: [embed], ephemeral: true });
+    await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
     return;
   }
 
@@ -118,7 +119,7 @@ execute(modal, async (interaction: ModalSubmitInteraction) => {
       text: "Ada | Anti Ping",
       iconURL: interaction.client.user.displayAvatarURL(),
     });
-  await interaction.reply({ embeds: [embed], ephemeral: true });
+  await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
 });
 
 export { group, modal }; 
