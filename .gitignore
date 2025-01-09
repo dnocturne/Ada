@@ -6,3 +6,6 @@ node_modules
 
 #Ignore configuration files
 config.json
+
+#bun lockfile
+bun.lockb
