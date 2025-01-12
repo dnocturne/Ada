@@ -1,0 +1,31 @@
+name: Deployment to KVM
+on:
+  push:
+    branches:
+      - master
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+      - name: Install dependencies
+        run: bun install
+      - name: Deploy to production
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.DEPLOY_KEY }}
+          script: |
+            cd /var/www/ada
+            git config --global --add safe.directory /var/www/ada
+            git pull
+            bun install
+            if pm2 describe ada > /dev/null; then
+              pm2 reload ada
+            else
+              pm2 start src/index.ts --name ada --interpreter /root/.bun/bin/bun
+            fi
+            pm2 save
