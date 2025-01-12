@@ -1,103 +1,112 @@
 import {
-  EmbedBuilder,
-  PermissionsBitField,
-  ModalBuilder,
-  TextInputBuilder,
-  ActionRowBuilder,
-  TextInputStyle,
-  ChatInputCommandInteraction,
-  ButtonInteraction,
-  GuildMember,
-  InteractionReplyOptions,
-  MessageFlags,
+	EmbedBuilder,
+	PermissionsBitField,
+	ModalBuilder,
+	TextInputBuilder,
+	ActionRowBuilder,
+	TextInputStyle,
+	MessageFlags,
+	GuildMember,
+} from "discord.js";
+import type {
+	ChatInputCommandInteraction,
+	ButtonInteraction,
+	InteractionReplyOptions,
 } from "discord.js";
 import ticketSchema from "../../schemas/tickets/ticketSchema.js";
 
-async function closeTicket(interaction: ChatInputCommandInteraction | ButtonInteraction) {
-  if (!interaction.channel) {
-    const response: InteractionReplyOptions = { 
-      content: "This command can only be used in a channel.", 
-      ephemeral: true
-    };
-    return interaction.deferred ? interaction.editReply(response) : interaction.reply(response);
-  }
-  const channelId = interaction.channel.id;
+async function closeTicket(
+	interaction: ChatInputCommandInteraction | ButtonInteraction,
+) {
+	// If the interaction is already deferred, we can't show a modal
+	if (interaction.deferred || interaction.replied) {
+		const errorEmbed = new EmbedBuilder()
+			.setColor("#FFB3BA")
+			.setTitle("❌ | Klaida")
+			.setDescription(
+				"Įvyko klaida bandant uždaryti bilietą. Prašome bandyti dar kartą.",
+			)
+			.setFooter({
+				text: "Ada | Error",
+				iconURL: interaction.client.user.displayAvatarURL(),
+			});
 
-  // Fetch the ticket information from the database
-  const ticket = await ticketSchema.findOne({ channelId });
-  if (!ticket) {
-    const noTicket = new EmbedBuilder()
-      .setColor("#FFB3BA")
-      .setTitle("❌ | Klaida")
-      .setDescription("Bilietas nerastas.")
-      .setFooter({
-        text: "Ada | Error",
-        iconURL: interaction.client.user.displayAvatarURL(),
-      });
+		return interaction.editReply({ embeds: [errorEmbed] });
+	}
 
-    const response: InteractionReplyOptions = { 
-      embeds: [noTicket], 
-      ephemeral: true
-    };
-    return interaction.deferred ? interaction.editReply(response) : interaction.reply(response);
-  }
+	if (!interaction.channel) {
+		return interaction.reply({
+			content: "This command can only be used in a channel.",
+			ephemeral: true,
+		});
+	}
 
-  const supportRoleId = ticket.supportRoleId;
+	const channelId = interaction.channel.id;
 
-  if (!interaction.member || !(interaction.member instanceof GuildMember)) {
-    const response: InteractionReplyOptions = { 
-      content: "This command can only be used by server members.", 
-      ephemeral: true
-    };
-    return interaction.deferred ? interaction.editReply(response) : interaction.reply(response);
-  }
+	// Fetch the ticket information from the database
+	const ticket = await ticketSchema.findOne({ channelId });
+	if (!ticket) {
+		const noTicket = new EmbedBuilder()
+			.setColor("#FFB3BA")
+			.setTitle("❌ | Klaida")
+			.setDescription("Bilietas nerastas.")
+			.setFooter({
+				text: "Ada | Error",
+				iconURL: interaction.client.user.displayAvatarURL(),
+			});
 
-  // Check if the user has permission to close the ticket
-  if (
-    !interaction.member.roles.cache.has(supportRoleId) &&
-    !interaction.member.permissions.has(
-      PermissionsBitField.Flags.Administrator
-    ) &&
-    ticket.userId !== interaction.user.id
-  ) {
-    const noPermission = new EmbedBuilder()
-      .setColor("#FFB3BA")
-      .setTitle("❌ | Klaida")
-      .setDescription("Jūs neturite teisės uždaryti šio bilieto.")
-      .setFooter({
-        text: "Ada | Error",
-        iconURL: interaction.client.user.displayAvatarURL(),
-      });
+		return interaction.reply({ embeds: [noTicket], ephemeral: true });
+	}
 
-    const response: InteractionReplyOptions = { 
-      embeds: [noPermission], 
-      flags: MessageFlags.Ephemeral
-    };
-    return interaction.deferred ? interaction.editReply(response) : interaction.reply(response);
-  }
+	const supportRoleId = ticket.supportRoleId;
 
-  const contentInput = new TextInputBuilder()
-    .setCustomId("content")
-    .setLabel("Content")
-    .setStyle(TextInputStyle.Paragraph)
-    .setPlaceholder("Bilieto uždarymo priežastis...")
-    .setRequired(true);
+	if (!interaction.member || !(interaction.member instanceof GuildMember)) {
+		return interaction.reply({
+			content: "This command can only be used by server members.",
+			ephemeral: true,
+		});
+	}
 
-  const row = new ActionRowBuilder<TextInputBuilder>().setComponents(contentInput);
+	// Check if the user has permission to close the ticket
+	if (
+		!interaction.member.roles.cache.has(supportRoleId) &&
+		!interaction.member.permissions.has(
+			PermissionsBitField.Flags.Administrator,
+		) &&
+		ticket.userId !== interaction.user.id
+	) {
+		const noPermission = new EmbedBuilder()
+			.setColor("#FFB3BA")
+			.setTitle("❌ | Klaida")
+			.setDescription("Jūs neturite teisės uždaryti šio bilieto.")
+			.setFooter({
+				text: "Ada | Error",
+				iconURL: interaction.client.user.displayAvatarURL(),
+			});
 
-  const modal = new ModalBuilder()
-    .setCustomId("closeTicketReason")
-    .setTitle("Įrašykite bilieto uždarymo priežastį")
-    .setComponents(row);
+		return interaction.reply({
+			embeds: [noPermission],
+			flags: MessageFlags.Ephemeral,
+		});
+	}
 
-  // If the interaction is deferred, we need to edit the reply before showing the modal
-  if (interaction.deferred) {
-    await interaction.editReply({ 
-      content: "Prašome įvesti uždarymo priežastį...",
-    });
-  }
-  
-  await interaction.showModal(modal);
+	const contentInput = new TextInputBuilder()
+		.setCustomId("content")
+		.setLabel("Content")
+		.setStyle(TextInputStyle.Paragraph)
+		.setPlaceholder("Bilieto uždarymo priežastis...")
+		.setRequired(true);
+
+	const row = new ActionRowBuilder<TextInputBuilder>().setComponents(
+		contentInput,
+	);
+
+	const modal = new ModalBuilder()
+		.setCustomId("closeTicketReason")
+		.setTitle("Įrašykite bilieto uždarymo priežastį")
+		.setComponents(row);
+
+	await interaction.showModal(modal);
 }
 
 export default closeTicket;
